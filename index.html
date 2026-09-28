@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07121e" />
+    <meta name="description" content="虎门大桥两个视频案例的主梁位移提取与三维响应展示。" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a1b2a'/%3E%3Cpath d='M8 41Q32 51 56 41M12 17v32m40-32v32M12 20q20 24 40 0M20 27v18m12-14v17m12-21v18' fill='none' stroke='%2359e2d0' stroke-width='3'/%3E%3C/svg%3E" />
+    <title>虎门大桥 · 视频数字孪生</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="brand-copy">
+          <p class="eyebrow">桥梁结构视觉监测</p>
+          <h1>虎门大桥 <span>视频数字孪生</span></h1>
+        </div>
+        <div class="topbar-meta"><span class="live-dot"></span> 离线视频分析 <span class="divider">/</span> 2 个独立案例</div>
+      </header>
+
+      <main>
+        <section class="workspace-heading" aria-label="案例选择">
+          <div class="case-tabs" role="tablist" aria-label="视频案例">
+            <button class="case-tab active" id="tab-case1" role="tab" aria-selected="true" data-case="case1"><span class="tab-index">01</span><span>近桥塔视角</span></button>
+            <button class="case-tab" id="tab-case2" role="tab" aria-selected="false" data-case="case2"><span class="tab-index">02</span><span>主跨侧视角</span></button>
+          </div>
+          <div class="case-descriptor" id="case-descriptor">Case 01 · 主梁局部竖向响应</div>
+        </section>
+
+        <section class="metrics" aria-label="测量摘要">
+          <div class="metric"><div class="metric-label">选中测点 90% 位移范围 <span class="estimate-pill">估算</span></div><div class="metric-value"><strong id="metric-displacement">—</strong><span>m</span></div><div class="metric-foot" id="metric-pixels">竖向相对位移 · 待标定验证</div></div>
+          <div class="metric"><div class="metric-label">主频参考</div><div class="metric-value"><strong id="metric-frequency">—</strong><span>Hz</span></div><div class="metric-foot">短时视频频谱估计</div></div>
+          <div class="metric"><div class="metric-label">监测点 / 视频时长</div><div class="metric-value"><strong id="metric-points">—</strong><span>点</span><span class="metric-slash">/</span><strong id="metric-duration">—</strong><span>s</span></div><div class="metric-foot" id="tracking-fps">深度学习点追踪</div></div>
+        </section>
+
+        <div class="analysis-grid">
+          <section class="panel video-panel" aria-labelledby="video-title">
+            <div class="panel-heading"><div><div class="panel-kicker">VIDEO / 01</div><h2 id="video-title">稳定化视频与测点</h2></div><span class="panel-tag">右下角处理结果</span></div>
+            <div class="video-stage" id="video-stage">
+              <video id="case-video" muted playsinline preload="metadata" src="/video/case1.mp4"></video>
+              <canvas id="video-overlay" aria-hidden="true"></canvas>
+              <div class="video-corner-label">PROCESSED VIEW <span>·</span> 30 FPS</div>
+            </div>
+            <div class="transport"><button id="play-button" class="play-button" type="button" aria-label="播放视频">▶</button><span id="current-time" class="timecode">00:00.0</span><input id="seek" type="range" min="0" max="100" value="0" aria-label="视频进度" /><span id="total-time" class="timecode">00:28.1</span></div>
+            <div class="point-legend" id="point-legend" aria-label="测点选择"></div>
+          </section>
+
+          <section class="panel model-panel" aria-labelledby="model-title">
+            <div class="panel-heading"><div><div class="panel-kicker">TWIN / 02</div><h2 id="model-title">主梁三维响应</h2></div><span class="panel-tag accent">结构示意模型</span></div>
+            <div class="model-stage" id="model-stage"><div class="model-fallback">三维结构视图加载中…</div><div class="model-axis">拖动旋转 · 滚轮缩放</div><div class="model-axis" id="selected-hanger" style="left:13px;right:auto">选择测点查看对应吊索</div></div>
+            <div class="model-controls"><label for="amplification">动画放大 <strong id="amplification-value">40×</strong></label><input id="amplification" type="range" min="5" max="100" step="5" value="40" /><span>仅用于观察振型</span></div>
+            <p class="model-note">测点按画面中可见吊索的左右顺序与相对间距映射，亮色线为选中点对应的示意吊索。模型采用公开的 888 m 主跨参数；绝对吊索编号和跨向里程尚未标定。</p>
+          </section>
+        </div>
+
+        <section class="panel chart-panel" aria-labelledby="chart-title">
+          <div class="panel-heading"><div><div class="panel-kicker">DISPLACEMENT / 03</div><h2 id="chart-title">竖向位移时程</h2></div><div class="chart-unit">单位：m（名义尺度换算）</div></div>
+          <div class="chart-wrap"><canvas id="displacement-chart" role="img" aria-label="稠密测点的估算位移时间曲线"></canvas></div>
+          <div class="chart-footer"><span>亮线为选中测点；竖线对应播放时刻。CSV 同时包含原始追踪坐标和处理后的位移。</span><button id="download-button" type="button">下载测点 CSV ↗</button></div>
+        </section>
+
+        <section class="context-grid" aria-label="测量说明">
+          <div class="context-card"><div class="context-number">01 / 输入</div><h3>两个视频，分别分析</h3><p>两段视频是否同期未知，因此作为两个独立案例。仅使用各自四宫格右下角的稳定化画面。</p></div>
+          <div class="context-card"><div class="context-number">02 / 追踪</div><h3>手动选点 + CoTracker3</h3><p>沿主梁使用手动选取的起点，每个测点由 3 个相邻查询点求中位轨迹；桥塔静止点校正相机残余运动，0.15–4 Hz 频带提取响应。</p></div>
+          <div class="context-card warning"><div class="context-number">03 / 边界</div><h3>米值仍未达到工程测量级</h3><p>以公开的约 3.01 m 箱梁高作名义尺度，缺少相机标定和同步实测。静止参照点仍有亚像素残差；深度追踪能改善跟点，但不能消除换算误差。</p></div>
+        </section>
+        <footer class="sources">资料依据：<a href="https://www.dengteam.com/uploadfile/2019/0127/20190127044127518.pdf" target="_blank" rel="noreferrer">虎门大桥箱梁参数 · 中南大学学报</a><span>·</span><a href="https://github.com/facebookresearch/co-tracker" target="_blank" rel="noreferrer">CoTracker3 点追踪模型</a><span>·</span><a href="https://www.sciencedirect.com/science/article/pii/S0926580524000116" target="_blank" rel="noreferrer">视频稳定化研究 · Automation in Construction</a><span>·</span><span>本页分析输入为当前文件夹内的两段视频</span></footer>
+      </main>
+    </div>
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</html>
